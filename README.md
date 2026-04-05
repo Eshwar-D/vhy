@@ -418,3 +418,233 @@ Use these as manual smoke tests in Postman, Insomnia, or curl.
 
 - Request a missing resource by ID
 - Expected: `404 Not Found`
+
+## Admin Routes For Postman
+
+Use an admin access token for all routes below unless noted otherwise.
+
+### Route Prefix Mapping
+- Frontend route: `GET /v1/api/analytics/dashboard` -> Backend route: `GET /api/analytics/dashboard`
+- Frontend route: `GET /v1/api/notifications` -> Backend route: `GET /api/notifications`
+- Frontend route: `PATCH /v1/api/notifications/mark-read` -> Backend route: `PATCH /api/notifications/mark-read`
+- Frontend route: `GET /v1/api/fish` -> Backend route: `GET /api/fish`
+- Frontend route: `POST /v1/api/fish` -> Backend route: `POST /api/fish`
+- Frontend route: `PUT /v1/api/fish/:id` -> Backend route: `PUT /api/fish/:id`
+- Frontend route: `DELETE /v1/api/fish/:id` -> Backend route: `DELETE /api/fish/:id`
+- Frontend route: `PATCH /v1/api/fish/:id/toggle-stock` -> Backend route: `PATCH /api/fish/:id/toggle-stock`
+- Frontend route: `GET /v1/api/upcoming-fish` -> Backend route: `GET /api/upcoming-fish`
+- Frontend route: `POST /v1/api/upcoming-fish` -> Backend route: `POST /api/upcoming-fish`
+- Frontend route: `DELETE /v1/api/upcoming-fish/:id` -> Backend route: `DELETE /api/upcoming-fish/:id`
+- Frontend route: `POST /v1/api/upcoming-fish/:id/move-to-available` -> Backend route: `POST /api/upcoming-fish/:id/move-to-available`
+- Frontend route: `GET /v1/api/orders` -> Backend route: `GET /api/orders`
+- Frontend route: `PATCH /v1/api/orders/:id/status` -> Backend route: `PATCH /api/orders/:id/status`
+- Frontend route: `GET /v1/api/buyers` -> Backend route: `GET /api/buyers`
+- Frontend route: `POST /v1/api/buyers` -> Backend route: `POST /api/buyers`
+- Frontend route: `PATCH /v1/api/buyers/:id/toggle-status` -> Backend route: `PATCH /api/buyers/:id/toggle-status`
+- Frontend route: `GET /v1/api/payments` -> Backend route: `GET /api/payments`
+- Frontend route: `GET /v1/api/payments/summary` -> Backend route: `GET /api/payments/summary`
+- Frontend route: `PATCH /v1/api/payments/:id/mark-paid` -> Backend route: `PATCH /api/payments/:id/mark-paid`
+- Frontend route: `GET /v1/api/analytics/revenue?period=daily|weekly` -> Backend route: `GET /api/analytics/revenue?period=daily|weekly`
+- Frontend route: `GET /v1/api/analytics/top-fish` -> Backend route: `GET /api/analytics/top-fish`
+- Frontend route: `GET /v1/api/analytics/top-buyers` -> Backend route: `GET /api/analytics/top-buyers`
+- Frontend route: `GET /v1/api/analytics/category-mix` -> Backend route: `GET /api/analytics/category-mix`
+- Frontend route: `GET /v1/api/settings` -> Backend route: `GET /api/settings`
+- Frontend route: `PUT /v1/api/settings` -> Backend route: `PUT /api/settings`
+- Frontend route: `POST /v1/api/auth/logout` -> Backend route: `POST /v1/api/auth/logout`
+
+### Common Headers
+- `Authorization: Bearer <admin_access_token>`
+- `Content-Type: application/json`
+
+### Admin Smoke Test Order
+
+1. `GET /api/analytics/dashboard`
+2. `GET /api/orders`
+3. `GET /api/buyers`
+4. `GET /api/payments/summary`
+5. `GET /api/settings`
+6. `GET /api/notifications`
+7. `GET /api/fish`
+8. `GET /api/upcoming-fish`
+
+### Example Requests
+
+#### GET /api/analytics/dashboard
+- Auth: admin token
+- Expected: `200 OK`
+- Example response: dashboard totals and summary cards
+
+#### GET /api/notifications
+- Auth: admin token
+- Expected: `200 OK`
+- Example response: notification list
+
+#### PATCH /api/notifications/mark-read
+- Auth: admin token
+- Body:
+```json
+{}
+```
+- Expected: `200 OK`
+- Example response: all notifications marked read
+
+#### GET /api/fish
+- Auth: admin token or none depending on server rules
+- Expected: `200 OK`
+- Example response: fish array
+
+#### POST /api/fish
+- Auth: admin token
+- Body:
+```json
+{
+  "name": "Rohu",
+  "category": "Freshwater",
+  "pricePerKg": 220,
+  "availableQty": 50,
+  "description": "Fresh stock"
+}
+```
+- Expected: `201 Created`
+
+#### PUT /api/fish/:id
+- Auth: admin token
+- Body:
+```json
+{
+  "name": "Rohu Premium",
+  "pricePerKg": 240,
+  "availableQty": 45
+}
+```
+- Expected: `200 OK`
+
+#### DELETE /api/fish/:id
+- Auth: admin token
+- Expected: `200 OK`
+
+#### PATCH /api/fish/:id/toggle-stock
+- Auth: admin token
+- Expected: `200 OK`
+
+#### GET /api/upcoming-fish
+- Auth: admin token
+- Expected: `200 OK`
+
+#### POST /api/upcoming-fish
+- Auth: admin token
+- Body:
+```json
+{
+  "name": "Hilsa",
+  "emoji": "🐟",
+  "expectedQty": 100,
+  "pricePerKg": 500,
+  "expectedArrivalDate": "2026-04-10T00:00:00.000Z",
+  "source": "Coastal supplier",
+  "status": "pending"
+}
+```
+- Expected: `201 Created`
+
+#### DELETE /api/upcoming-fish/:id
+- Auth: admin token
+- Expected: `200 OK`
+
+#### POST /api/upcoming-fish/:id/move-to-available
+- Auth: admin token
+- Body example:
+```json
+{
+  "category": "Freshwater",
+  "description": "Moved from upcoming stock",
+  "imageUrl": "https://example.com/hilsa.jpg"
+}
+```
+- Expected: `200 OK`
+
+#### GET /api/orders
+- Auth: admin token
+- Expected: `200 OK`
+
+#### PATCH /api/orders/:id/status
+- Auth: admin token
+- Body:
+```json
+{
+  "status": "Delivered"
+}
+```
+- Expected: `200 OK`
+
+#### GET /api/buyers
+- Auth: admin token
+- Expected: `200 OK`
+
+#### POST /api/buyers
+- Auth: admin token
+- Body example:
+```json
+{
+  "name": "Buyer A",
+  "phone": "9876543210",
+  "businessName": "A Seafood Store"
+}
+```
+- Expected: `200` or `201`
+
+#### PATCH /api/buyers/:id/toggle-status
+- Auth: admin token
+- Expected: `200 OK`
+
+#### GET /api/payments
+- Auth: admin token
+- Expected: `200 OK`
+
+#### GET /api/payments/summary
+- Auth: admin token
+- Expected: `200 OK`
+
+#### PATCH /api/payments/:id/mark-paid
+- Auth: admin token
+- Expected: `200 OK`
+
+#### GET /api/analytics/revenue?period=daily
+- Auth: admin token
+- Expected: `200 OK`
+
+#### GET /api/analytics/top-fish
+- Auth: admin token
+- Expected: `200 OK`
+
+#### GET /api/analytics/top-buyers
+- Auth: admin token
+- Expected: `200 OK`
+
+#### GET /api/analytics/category-mix
+- Auth: admin token
+- Expected: `200 OK`
+
+#### GET /api/settings
+- Auth: admin token
+- Expected: `200 OK`
+
+#### PUT /api/settings
+- Auth: admin token
+- Body example:
+```json
+{
+  "name": "Admin Updated"
+}
+```
+- Expected: `200 OK`
+
+#### POST /v1/api/auth/logout
+- Auth: access token or cookie
+- Expected: `200 OK`
+
+### Expected Errors
+- No token on admin route: `401 Unauthorized`
+- Non-admin token on admin route: `403 Forbidden`
+- Missing resource ID: `404 Not Found`
+- Bad request body: `400 Bad Request`
